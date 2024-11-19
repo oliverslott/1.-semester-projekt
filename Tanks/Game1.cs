@@ -17,7 +17,7 @@ namespace Tanks
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private SpriteFont textFont;
+        //private SpriteFont textFont;
 
         private List<GameObject> gameObjects;
 
@@ -47,9 +47,18 @@ namespace Tanks
 
         protected override void Initialize()
         {
+            // Initialiser listerne
             gameObjects = new List<GameObject>();
             gameObjectsToRemove = new List<GameObject>();
             gameObjectsToAdd = new List<GameObject>();
+            
+            // Opret to spillere med startpositioner
+            var player1 = new Player(new Vector2(200, 360), true);  // Spiller 1 til venstre
+            var player2 = new Player(new Vector2(1080, 360), false); // Spiller 2 til højre
+
+            // Tilføj spillerne til spillet
+            gameObjects.Add(player1);
+            gameObjects.Add(player2);
 
             base.Initialize();
         }
@@ -148,13 +157,13 @@ namespace Tanks
             if (!go.CollisionEnabled) return;
 
             Rectangle collisionBox = go.CollisionBox;
-            Rectangle topLine = new Rectangle(collisionBox.X, collisionBox.Y, collisionBox.Width, 1);
+            Rectangle topLine = new Rectangle(collisionBox.X + 45, collisionBox.Y + 90, collisionBox.Width -90, 1);
 
-            Rectangle bottomLine = new Rectangle(collisionBox.X, collisionBox.Y + collisionBox.Height, collisionBox.Width, 1);
+            Rectangle bottomLine = new Rectangle(collisionBox.X + 45, collisionBox.Y + collisionBox.Height - 90, collisionBox.Width - 90, 1);
 
-            Rectangle rightLine = new Rectangle(collisionBox.X + collisionBox.Width, collisionBox.Y, 1, collisionBox.Height);
+            Rectangle rightLine = new Rectangle(collisionBox.X + collisionBox.Width - 45, collisionBox.Y + 90, 1, collisionBox.Height - 180);
 
-            Rectangle leftLine = new Rectangle(collisionBox.X, collisionBox.Y, 1, collisionBox.Height);
+            Rectangle leftLine = new Rectangle(collisionBox.X + 45, collisionBox.Y + 90, 1, collisionBox.Height - 180);
 
             _spriteBatch.Draw(collisionTexture, topLine, null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 1);
             _spriteBatch.Draw(collisionTexture, bottomLine, null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 1);
