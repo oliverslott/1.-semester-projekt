@@ -17,7 +17,7 @@ namespace Tanks
         private Texture2D playerOneTexture;
         private Texture2D playerTwoTexture;
         private bool isPlayerOne;
-        private int speed;
+        private new int speed;
 
         public Player(Vector2 startPosition, bool isPlayerOne)
         {
