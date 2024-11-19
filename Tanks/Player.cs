@@ -32,7 +32,7 @@ namespace Tanks
             this.isPlayerOne = isPlayerOne;
 
             //Sprite skala
-            this.scale = .5f;
+            this.scale = .15f;
 
             //Hastighed
             this.speed = 1;
@@ -82,7 +82,7 @@ namespace Tanks
 
         public override void Draw(SpriteBatch spriteBatch)
         {            
-            // Tegn spilleren
+            // Tegn spillerne med spriteeffects fra player-input
             spriteBatch.Draw(Sprite, Position, null, Color.White, rotation, 
             new Vector2(Sprite.Width / 2, Sprite.Height / 2), scale, spriteEffects, 0);
 
