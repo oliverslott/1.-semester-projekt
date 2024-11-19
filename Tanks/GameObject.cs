@@ -16,7 +16,7 @@ public abstract class GameObject
     protected float speed;
     protected Rectangle collisionBox;
     protected float scale = 1f;
-    private bool collisionEnabled = true;
+    public bool collisionEnabled = true;
     protected Vector2 size;
     protected SpriteEffects spriteEffects = SpriteEffects.None;
 

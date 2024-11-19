@@ -157,13 +157,13 @@ namespace Tanks
             if (!go.CollisionEnabled) return;
 
             Rectangle collisionBox = go.CollisionBox;
-            Rectangle topLine = new Rectangle(collisionBox.X + 45, collisionBox.Y + 90, collisionBox.Width -90, 1);
+            Rectangle topLine = new Rectangle(collisionBox.X + 20, collisionBox.Y + 45, collisionBox.Width - 40, 1);
 
-            Rectangle bottomLine = new Rectangle(collisionBox.X + 45, collisionBox.Y + collisionBox.Height - 90, collisionBox.Width - 90, 1);
+            Rectangle bottomLine = new Rectangle(collisionBox.X + 20, collisionBox.Y + collisionBox.Height - 45, collisionBox.Width - 40, 1);
 
-            Rectangle rightLine = new Rectangle(collisionBox.X + collisionBox.Width - 45, collisionBox.Y + 90, 1, collisionBox.Height - 180);
+            Rectangle rightLine = new Rectangle(collisionBox.X + collisionBox.Width - 20, collisionBox.Y + 45, 1, collisionBox.Height - 90);
 
-            Rectangle leftLine = new Rectangle(collisionBox.X + 45, collisionBox.Y + 90, 1, collisionBox.Height - 180);
+            Rectangle leftLine = new Rectangle(collisionBox.X + 20, collisionBox.Y + 45, 1, collisionBox.Height - 90);
 
             _spriteBatch.Draw(collisionTexture, topLine, null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 1);
             _spriteBatch.Draw(collisionTexture, bottomLine, null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 1);
@@ -171,5 +171,7 @@ namespace Tanks
             _spriteBatch.Draw(collisionTexture, leftLine, null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 1);
 
         }
+
+        
     }
 }
