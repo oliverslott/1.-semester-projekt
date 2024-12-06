@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
@@ -18,6 +19,8 @@ namespace Tanks
         private Texture2D playerTwoTexture;
         private bool isPlayerOne;
         private new int speed;
+
+        private KeyboardState prevKeyboardState;
 
         public Player(Vector2 startPosition, bool isPlayerOne)
         {
@@ -64,6 +67,10 @@ namespace Tanks
                     position.X += speed;
                     spriteEffects = SpriteEffects.None;
                 }
+                if(keyboardState.IsKeyDown(Keys.Space) && !prevKeyboardState.IsKeyDown(Keys.Space))
+                {
+                    Game1.InstantiateGameobject(new Bullet(position, new Vector2(1, -1)));
+                }
             }
             else
             {
@@ -78,6 +85,8 @@ namespace Tanks
                     spriteEffects = SpriteEffects.None;
                 }
             }
+
+            prevKeyboardState = keyboardState;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

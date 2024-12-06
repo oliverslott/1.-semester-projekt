@@ -17,6 +17,8 @@ namespace Tanks
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        public static GraphicsDevice GlobalGraphicsDevice { get; private set; }
+
         //private SpriteFont textFont;
 
         private List<GameObject> gameObjects;
@@ -47,6 +49,7 @@ namespace Tanks
 
         protected override void Initialize()
         {
+            GlobalGraphicsDevice = GraphicsDevice;
             // Initialiser listerne
             gameObjects = new List<GameObject>();
             gameObjectsToRemove = new List<GameObject>();
