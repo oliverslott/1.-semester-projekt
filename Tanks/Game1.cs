@@ -17,7 +17,7 @@ namespace Tanks
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private SpriteFont textFont;
+        //private SpriteFont textFont;
 
         private List<GameObject> gameObjects;
 
@@ -47,9 +47,18 @@ namespace Tanks
 
         protected override void Initialize()
         {
+            // Initialiser listerne
             gameObjects = new List<GameObject>();
             gameObjectsToRemove = new List<GameObject>();
             gameObjectsToAdd = new List<GameObject>();
+            
+            // Opret to spillere med startpositioner
+            var player1 = new Player(new Vector2(200, 360), true);  // Spiller 1 til venstre
+            var player2 = new Player(new Vector2(1080, 360), false); // Spiller 2 til højre
+
+            // Tilføj spillerne til spillet
+            gameObjects.Add(player1);
+            gameObjects.Add(player2);
 
             base.Initialize();
         }
@@ -160,7 +169,8 @@ namespace Tanks
             _spriteBatch.Draw(collisionTexture, bottomLine, null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 1);
             _spriteBatch.Draw(collisionTexture, rightLine, null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 1);
             _spriteBatch.Draw(collisionTexture, leftLine, null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 1);
-
         }
+
+        
     }
 }
