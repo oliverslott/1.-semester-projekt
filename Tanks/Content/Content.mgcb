@@ -49,3 +49,15 @@
 /processorParam:TextureFormat=Color
 /build:tank_model_2_1_b.png
 
+#begin tank_model_4_5_w1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:tank_model_4_5_w1.png
+

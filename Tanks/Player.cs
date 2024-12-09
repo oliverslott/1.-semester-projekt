@@ -19,6 +19,11 @@ namespace Tanks
         private bool isPlayerOne;
         private new int speed;
 
+        // Kanon
+        private Cannon cannon;
+        // Indlæs kanonens sprite i `LoadContent`:
+        private Texture2D cannonTexture;
+
         public Player(Vector2 startPosition, bool isPlayerOne)
         {
             //Start stats
@@ -46,45 +51,51 @@ namespace Tanks
 
             //Spites for spillere
             Sprite = isPlayerOne ? playerOneTexture : playerTwoTexture;
+
+            // Tilføj kanonens sprite
+            cannonTexture = contentManager.Load<Texture2D>("tank_model_4_5_w1"); 
+            cannon = new Cannon(cannonTexture, position); // Initialiser kanonen
         }
 
         public override void Update(GameTime gameTime)
         {
             var keyboardState = Keyboard.GetState();
 
+            // Bevæg tanken
             if (isPlayerOne)
             {
-                if (keyboardState.IsKeyDown(Keys.A)) 
-                {
-                    position.X -= speed;
-                    spriteEffects = SpriteEffects.FlipHorizontally;
-                }
-                if (keyboardState.IsKeyDown(Keys.D)) 
-                {
-                    position.X += speed;
-                    spriteEffects = SpriteEffects.None;
-                }
+                if (keyboardState.IsKeyDown(Keys.A)) position.X -= speed;
+                if (keyboardState.IsKeyDown(Keys.D)) position.X += speed;
+
+                // Roter kanonen med W og S
+                if (keyboardState.IsKeyDown(Keys.W)) cannon.Rotate(-0.05f);
+                if (keyboardState.IsKeyDown(Keys.S)) cannon.Rotate(0.05f);
             }
             else
             {
-                if (keyboardState.IsKeyDown(Keys.Left)) 
-                {
-                    position.X -= speed;
-                    spriteEffects = SpriteEffects.FlipHorizontally;
-                }
-                if (keyboardState.IsKeyDown(Keys.Right)) 
-                {
-                    position.X += speed;
-                    spriteEffects = SpriteEffects.None;
-                }
+                if (keyboardState.IsKeyDown(Keys.Left)) position.X -= speed;
+                if (keyboardState.IsKeyDown(Keys.Right)) position.X += speed;
+
+                // Roter kanonen med pil op og pil ned
+                if (keyboardState.IsKeyDown(Keys.Up)) cannon.Rotate(-0.05f);
+                if (keyboardState.IsKeyDown(Keys.Down)) cannon.Rotate(0.05f);
             }
+
+            // Beregn tankens centerpunkt
+            Vector2 tankCenter = position + new Vector2(Sprite.Width / 2 * scale, Sprite.Height / 2 * scale);
+
+            // Opdater kanonens position og rotation
+            cannon.Update(tankCenter, rotation);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
-        {            
-            // Tegn spillerne med spriteeffects fra player-input
-            spriteBatch.Draw(Sprite, Position, null, Color.White, rotation, 
-            new Vector2(Sprite.Width / 2, Sprite.Height / 2), scale, spriteEffects, 0);
+        {
+            // Tegn tanken først
+            spriteBatch.Draw(Sprite, position, null, Color.White, rotation,
+                new Vector2(Sprite.Width / 2, Sprite.Height / 2), scale, spriteEffects, 0);
+
+            // Tegn kanonen ovenpå tanken
+            cannon.Draw(spriteBatch);
 
             if (collisionEnabled)
             {
