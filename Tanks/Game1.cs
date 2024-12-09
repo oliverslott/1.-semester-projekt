@@ -30,6 +30,17 @@ namespace Tanks
 
         private Texture2D collisionTexture;
 
+        private static int currentTurnIndex = 0;
+
+        private static float switchingTurnTimer = 0; //seconds
+        private static float switchingTurnTime = 3f; //seconds
+        private static bool switchingTurn = false;
+        private static Player[] players = new Player[2]; //Currently game only supports 2 players
+        public static Player[] Players { get => players; set => players = value; }
+
+        public static int CurrentTurnIndex { get => currentTurnIndex; set => currentTurnIndex = value; }
+        public static bool SwitchingTurn { get => switchingTurn; set => switchingTurn = value; }
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -59,6 +70,10 @@ namespace Tanks
             var player1 = new Player(new Vector2(200, 360), true);  // Spiller 1 til venstre
             var player2 = new Player(new Vector2(1080, 360), false); // Spiller 2 til højre
 
+            //Add player to a list so that we can later reference them for changing turns and deciding who won
+            players[0] = player1;
+            players[1] = player2;
+
             // Tilføj spillerne til spillet
             gameObjects.Add(player1);
             gameObjects.Add(player2);
@@ -81,6 +96,17 @@ namespace Tanks
 
         protected override void Update(GameTime gameTime)
         {
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if(switchingTurn)
+            {
+                switchingTurnTimer += deltaTime;
+                if(switchingTurnTimer >= switchingTurnTime)
+                {
+                    switchingTurnTimer = 0f;
+                    switchingTurn = false;
+                }
+            }
+
             foreach (GameObject gameObject in gameObjects)
             {
                 gameObject.Update(gameTime);
@@ -144,6 +170,17 @@ namespace Tanks
         public static void InstantiateGameobject(GameObject gameObject)
         {
             gameObjectsToAdd.Add(gameObject);
+        }
+
+        public static void EndTurn()
+        {
+            currentTurnIndex++;
+            if (currentTurnIndex >= players.Length)
+            {
+                currentTurnIndex = 0;
+            }
+            switchingTurn = true;
+            Debug.WriteLine($"Turn changed to player index: {currentTurnIndex}");
         }
 
         private void RemoveGameobjects()

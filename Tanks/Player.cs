@@ -44,10 +44,12 @@ namespace Tanks
             this.speed = 1;
 
             healthBar = new HealthBar(maxHealth);
+            prevKeyboardState = Keyboard.GetState();
 
-        }
 
-        public override void LoadContent(ContentManager contentManager)
+    }
+
+    public override void LoadContent(ContentManager contentManager)
         {
             playerOneTexture = contentManager.Load<Texture2D>("tank_model_1_1_b");
             playerTwoTexture = contentManager.Load<Texture2D>("tank_model_2_1_b");
@@ -61,43 +63,31 @@ namespace Tanks
             healthBar.CurrentHealth = health;
             healthBar.Position = position - new Vector2(0, 1) * 18; //Healthbar is 18 pixels above the tank
 
+            if (Game1.Players[Game1.CurrentTurnIndex] != this || Game1.SwitchingTurn)
+                return;
+
             var keyboardState = Keyboard.GetState();
 
-            if (isPlayerOne)
+            if (keyboardState.IsKeyDown(Keys.A) || keyboardState.IsKeyDown(Keys.Left)) 
             {
-                if (keyboardState.IsKeyDown(Keys.A)) 
-                {
-                    position.X -= speed;
-                    spriteEffects = SpriteEffects.FlipHorizontally;
-                }
-                if (keyboardState.IsKeyDown(Keys.D)) 
-                {
-                    position.X += speed;
-                    spriteEffects = SpriteEffects.None;
-                }
-                if(keyboardState.IsKeyDown(Keys.Space) && !prevKeyboardState.IsKeyDown(Keys.Space))
-                {
-                    var bulletDirection = new Vector2(1, -1);
-
-                    //Spawns the bullet 30 pixels ahead so the player doesn't get hit by its own bullet
-                    //Alternative solution could be to disable to bullet collision for a few milliseconds, but this is simpler
-                    var bulletPosition = position + bulletDirection * 30;
-
-                    Game1.InstantiateGameobject(new Bullet(bulletPosition, bulletDirection));
-                }
+                position.X -= speed;
+                spriteEffects = SpriteEffects.FlipHorizontally;
             }
-            else
+            if (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.Right)) 
             {
-                if (keyboardState.IsKeyDown(Keys.Left)) 
-                {
-                    position.X -= speed;
-                    spriteEffects = SpriteEffects.FlipHorizontally;
-                }
-                if (keyboardState.IsKeyDown(Keys.Right)) 
-                {
-                    position.X += speed;
-                    spriteEffects = SpriteEffects.None;
-                }
+                position.X += speed;
+                spriteEffects = SpriteEffects.None;
+            }
+            if(keyboardState.IsKeyDown(Keys.Space) && !prevKeyboardState.IsKeyDown(Keys.Space))
+            {
+                var bulletDirection = new Vector2(1, -1);
+
+                //Spawns the bullet 30 pixels ahead so the player doesn't get hit by its own bullet
+                //Alternative solution could be to disable to bullet collision for a few milliseconds, but this is simpler
+                var bulletPosition = position + bulletDirection * 30;
+
+                Game1.InstantiateGameobject(new Bullet(bulletPosition, bulletDirection));
+                Game1.EndTurn();
             }
 
             prevKeyboardState = keyboardState;
