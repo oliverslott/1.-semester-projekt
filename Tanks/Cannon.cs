@@ -23,10 +23,10 @@ namespace Tanks
             this.scale = 0.15f;
 
             // Centrer origin, så rotation sker omkring kanonens midtpunkt
-            this.origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
+            this.origin = new Vector2(sprite.Width + 50, sprite.Height - 100);
         }
 
-        public void Update(Vector2 tankCenter, float tankRotation)
+        public void Update(Vector2 tankCenter, float tankRotation, bool isFlipped)
         {
             // Beregn en offset for at flytte kanonen op
             Vector2 offset = new Vector2(-8, -30); // Flytter kanonen 20 pixels op (juster efter behov)
@@ -35,6 +35,15 @@ namespace Tanks
             Matrix rotationMatrix = Matrix.CreateRotationZ(tankRotation);
             offset = Vector2.Transform(offset, rotationMatrix);
 
+            // Hvis tanken er flipped, spejl offset vandret
+            if (isFlipped)
+            {
+                offset.X = -offset.X;
+                
+                // Justér positionen for flip omkring venstre side
+                position = tankCenter + offset - new Vector2(sprite.Width * scale, 0); // Flyt mod venstre
+            }
+
             // Placér kanonen midt på tanken med offset
             position = tankCenter + offset;
 
@@ -42,19 +51,19 @@ namespace Tanks
             rotation = tankRotation;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, SpriteEffects spriteEffects)
         {
             spriteBatch.Draw(
-                sprite, 
-                position, 
-                null, 
-                Color.White, 
-                rotation,    // Brug rotation til at dreje kanonen
-                origin, 
-                scale, 
-                SpriteEffects.None, 
-                0f
-            );
+            sprite,
+            position,
+            null,
+            Color.White,
+            rotation, // Roter kanonen som normalt
+            origin,   // Sørg for, at kanonen roterer omkring sit midtpunkt
+            scale,
+            spriteEffects, // Flip baseret på tankens retning
+            0
+        );
         }
 
         public void Rotate(float angle)

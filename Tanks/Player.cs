@@ -60,12 +60,21 @@ namespace Tanks
         public override void Update(GameTime gameTime)
         {
             var keyboardState = Keyboard.GetState();
+            bool isFlipped = false;
 
             // Bevæg tanken
             if (isPlayerOne)
             {
-                if (keyboardState.IsKeyDown(Keys.A)) position.X -= speed;
-                if (keyboardState.IsKeyDown(Keys.D)) position.X += speed;
+                if (keyboardState.IsKeyDown(Keys.A)) 
+                {
+                    position.X -= speed;
+                    spriteEffects = SpriteEffects.FlipHorizontally;
+                }
+                if (keyboardState.IsKeyDown(Keys.D)) 
+                {
+                    position.X += speed;
+                    spriteEffects = SpriteEffects.None;
+                }
 
                 // Roter kanonen med W og S
                 if (keyboardState.IsKeyDown(Keys.W)) cannon.Rotate(-0.05f);
@@ -73,8 +82,16 @@ namespace Tanks
             }
             else
             {
-                if (keyboardState.IsKeyDown(Keys.Left)) position.X -= speed;
-                if (keyboardState.IsKeyDown(Keys.Right)) position.X += speed;
+                if (keyboardState.IsKeyDown(Keys.Left)) 
+                {
+                    position.X -= speed;
+                    spriteEffects = SpriteEffects.FlipHorizontally;
+                }
+                if (keyboardState.IsKeyDown(Keys.Right)) 
+                {
+                    position.X += speed;
+                    spriteEffects = SpriteEffects.None;
+                }
 
                 // Roter kanonen med pil op og pil ned
                 if (keyboardState.IsKeyDown(Keys.Up)) cannon.Rotate(-0.05f);
@@ -85,7 +102,7 @@ namespace Tanks
             Vector2 tankCenter = position + new Vector2(Sprite.Width / 2 * scale, Sprite.Height / 2 * scale);
 
             // Opdater kanonens position og rotation
-            cannon.Update(tankCenter, rotation);
+            cannon.Update(tankCenter, rotation, isFlipped);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -95,7 +112,7 @@ namespace Tanks
                 new Vector2(Sprite.Width / 2, Sprite.Height / 2), scale, spriteEffects, 0);
 
             // Tegn kanonen ovenpå tanken
-            cannon.Draw(spriteBatch);
+            cannon.Draw(spriteBatch, spriteEffects);
 
             if (collisionEnabled)
             {
