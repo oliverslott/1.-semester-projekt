@@ -38,6 +38,11 @@ namespace Tanks
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             velocity.Y += 1f * deltaTime;
             Move(gameTime);
+
+            if(position.Y >= Game1.GetScreenSize().Y)
+            {
+                Game1.AddGameobjectToRemove(this);
+            }
         }
     }
 }

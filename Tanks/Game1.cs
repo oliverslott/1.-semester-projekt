@@ -30,16 +30,9 @@ namespace Tanks
 
         private Texture2D collisionTexture;
 
-        private static int currentTurnIndex = 0;
+        private Player[] players = new Player[2]; //Currently game only supports 2 players
 
-        private static float switchingTurnTimer = 0; //seconds
-        private static float switchingTurnTime = 3f; //seconds
-        private static bool switchingTurn = false;
-        private static Player[] players = new Player[2]; //Currently game only supports 2 players
-        public static Player[] Players { get => players; set => players = value; }
-
-        public static int CurrentTurnIndex { get => currentTurnIndex; set => currentTurnIndex = value; }
-        public static bool SwitchingTurn { get => switchingTurn; set => switchingTurn = value; }
+        private TurnManager turnManager;
 
         public Game1()
         {
@@ -65,10 +58,12 @@ namespace Tanks
             gameObjects = new List<GameObject>();
             gameObjectsToRemove = new List<GameObject>();
             gameObjectsToAdd = new List<GameObject>();
-            
+
+            turnManager = new TurnManager(players);
+
             // Opret to spillere med startpositioner
-            var player1 = new Player(new Vector2(200, 360), true);  // Spiller 1 til venstre
-            var player2 = new Player(new Vector2(1080, 360), false); // Spiller 2 til højre
+            var player1 = new Player(new Vector2(200, 360), true, turnManager);  // Spiller 1 til venstre
+            var player2 = new Player(new Vector2(1080, 360), false, turnManager); // Spiller 2 til højre
 
             //Add player to a list so that we can later reference them for changing turns and deciding who won
             players[0] = player1;
@@ -96,16 +91,7 @@ namespace Tanks
 
         protected override void Update(GameTime gameTime)
         {
-            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if(switchingTurn)
-            {
-                switchingTurnTimer += deltaTime;
-                if(switchingTurnTimer >= switchingTurnTime)
-                {
-                    switchingTurnTimer = 0f;
-                    switchingTurn = false;
-                }
-            }
+            turnManager.Update(gameTime);
 
             foreach (GameObject gameObject in gameObjects)
             {
@@ -172,21 +158,11 @@ namespace Tanks
             gameObjectsToAdd.Add(gameObject);
         }
 
-        public static void EndTurn()
-        {
-            currentTurnIndex++;
-            if (currentTurnIndex >= players.Length)
-            {
-                currentTurnIndex = 0;
-            }
-            switchingTurn = true;
-            Debug.WriteLine($"Turn changed to player index: {currentTurnIndex}");
-        }
-
         private void RemoveGameobjects()
         {
             foreach (GameObject gameObject in gameObjectsToRemove)
             {
+                Debug.WriteLine($"Removed object: {gameObject}");
                 gameObjects.Remove(gameObject);
             }
             gameObjectsToRemove.Clear();

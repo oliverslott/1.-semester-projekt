@@ -13,6 +13,7 @@ namespace Tanks
 {
     public class Player : GameObject
     {
+        private TurnManager turnManager;
         protected int health;
         protected int maxHealth;
         protected int shield;
@@ -24,7 +25,7 @@ namespace Tanks
 
         private KeyboardState prevKeyboardState;
 
-        public Player(Vector2 startPosition, bool isPlayerOne)
+        public Player(Vector2 startPosition, bool isPlayerOne, TurnManager turnManager)
         {
             //Start stats
             this.maxHealth = 100;
@@ -45,11 +46,10 @@ namespace Tanks
 
             healthBar = new HealthBar(maxHealth);
             prevKeyboardState = Keyboard.GetState();
+            this.turnManager = turnManager;
+        }
 
-
-    }
-
-    public override void LoadContent(ContentManager contentManager)
+        public override void LoadContent(ContentManager contentManager)
         {
             playerOneTexture = contentManager.Load<Texture2D>("tank_model_1_1_b");
             playerTwoTexture = contentManager.Load<Texture2D>("tank_model_2_1_b");
@@ -63,7 +63,7 @@ namespace Tanks
             healthBar.CurrentHealth = health;
             healthBar.Position = position - new Vector2(0, 1) * 18; //Healthbar is 18 pixels above the tank
 
-            if (Game1.Players[Game1.CurrentTurnIndex] != this || Game1.SwitchingTurn)
+            if (!turnManager.IsPlayerTurn(this))
                 return;
 
             var keyboardState = Keyboard.GetState();
@@ -87,7 +87,7 @@ namespace Tanks
                 var bulletPosition = position + bulletDirection * 30;
 
                 Game1.InstantiateGameobject(new Bullet(bulletPosition, bulletDirection));
-                Game1.EndTurn();
+                turnManager.EndTurn();
             }
 
             prevKeyboardState = keyboardState;
