@@ -14,18 +14,21 @@ namespace Tanks
     public class Player : GameObject
     {
         protected int health;
+        protected int maxHealth;
         protected int shield;
         private Texture2D playerOneTexture;
         private Texture2D playerTwoTexture;
         private bool isPlayerOne;
         private new int speed;
+        private HealthBar healthBar;
 
         private KeyboardState prevKeyboardState;
 
         public Player(Vector2 startPosition, bool isPlayerOne)
         {
             //Start stats
-            this.health = 100;
+            this.maxHealth = 100;
+            this.health = maxHealth;
             this.shield = 100;
 
             //Startposition
@@ -40,6 +43,8 @@ namespace Tanks
             //Hastighed
             this.speed = 1;
 
+            healthBar = new HealthBar(maxHealth);
+
         }
 
         public override void LoadContent(ContentManager contentManager)
@@ -53,6 +58,9 @@ namespace Tanks
 
         public override void Update(GameTime gameTime)
         {
+            healthBar.CurrentHealth = health;
+            healthBar.Position = position - new Vector2(0, 1) * 18; //Healthbar is 18 pixels above the tank
+
             var keyboardState = Keyboard.GetState();
 
             if (isPlayerOne)
@@ -69,7 +77,13 @@ namespace Tanks
                 }
                 if(keyboardState.IsKeyDown(Keys.Space) && !prevKeyboardState.IsKeyDown(Keys.Space))
                 {
-                    Game1.InstantiateGameobject(new Bullet(position, new Vector2(1, -1)));
+                    var bulletDirection = new Vector2(1, -1);
+
+                    //Spawns the bullet 30 pixels ahead so the player doesn't get hit by its own bullet
+                    //Alternative solution could be to disable to bullet collision for a few milliseconds, but this is simpler
+                    var bulletPosition = position + bulletDirection * 30;
+
+                    Game1.InstantiateGameobject(new Bullet(bulletPosition, bulletDirection));
                 }
             }
             else
@@ -90,7 +104,9 @@ namespace Tanks
         }
 
         public override void Draw(SpriteBatch spriteBatch)
-        {            
+        {
+            healthBar.Draw(spriteBatch);
+
             // Tegn spillerne med spriteeffects fra player-input
             spriteBatch.Draw(Sprite, Position, null, Color.White, rotation, 
             new Vector2(Sprite.Width / 2, Sprite.Height / 2), scale, spriteEffects, 0);
@@ -111,7 +127,12 @@ namespace Tanks
 
         public override void OnCollision(GameObject other)
         {
-            
+            if(other is Bullet)
+            {
+                health -= 70;
+                Debug.WriteLine($"Tank got hit and now has {health} health left");
+                Game1.AddGameobjectToRemove(other);
+            }
         }
 
     }
