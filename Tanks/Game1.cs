@@ -30,6 +30,8 @@ namespace Tanks
 
         private Texture2D collisionTexture;
 
+        private Texture2D mapSprite;
+
         private Player[] players = new Player[2]; //Currently game only supports 2 players
 
         private TurnManager turnManager;
@@ -59,6 +61,8 @@ namespace Tanks
             gameObjectsToRemove = new List<GameObject>();
             gameObjectsToAdd = new List<GameObject>();
 
+            mapSprite = Content.Load<Texture2D>("tankmap");
+
             turnManager = new TurnManager(players);
 
             // Opret to spillere med startpositioner
@@ -81,6 +85,8 @@ namespace Tanks
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             collisionTexture = Content.Load<Texture2D>("pixel");
+
+            mapSprite = Content.Load<Texture2D>("tankmap");
 
             foreach (GameObject gameobject in gameObjects)
             {
@@ -125,6 +131,8 @@ namespace Tanks
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+
+            _spriteBatch.Draw(mapSprite, Vector2.Zero, Color.White);
 
             foreach (GameObject gameobject in gameObjects)
             {
