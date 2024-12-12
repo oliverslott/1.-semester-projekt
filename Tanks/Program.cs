@@ -1,2 +1,2 @@
-﻿using var game = new Tanks.Game1();
+﻿using var game = new Tanks.GameWorld();
 game.Run();

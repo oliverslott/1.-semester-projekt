@@ -21,7 +21,7 @@ namespace Tanks
 
         public HealthBar(int maxHealth)
         {
-            sprite = new Texture2D(Game1.GlobalGraphicsDevice, 1, 1);
+            sprite = new Texture2D(GameWorld.GlobalGraphicsDevice, 1, 1);
             sprite.SetData(new[] { Color.Red });
             this.maxHealth = maxHealth;
         }

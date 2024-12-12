@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Tanks
 {
-    public class Game1 : Game
+    public class GameWorld : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -52,7 +52,7 @@ namespace Tanks
         private Song song;
         private float songVolume = 0.02f;
 
-        public Game1()
+        public GameWorld()
         {
             _graphics = new GraphicsDeviceManager(this);
             _graphics.PreferredBackBufferWidth = 1280;

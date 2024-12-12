@@ -17,7 +17,7 @@ namespace Tanks
         public Bullet(Vector2 pos, Vector2 direction)
         {
             position = pos;
-            Sprite = new Texture2D(Game1.GlobalGraphicsDevice, 1, 1);
+            Sprite = new Texture2D(GameWorld.GlobalGraphicsDevice, 1, 1);
             scale = 5;
             Sprite.SetData(new[] { Color.Black });
             velocity = direction * 250;
@@ -39,9 +39,9 @@ namespace Tanks
             velocity.Y += 300f * deltaTime;
             Move(gameTime);
 
-            if(position.Y >= Game1.GetScreenSize().Y)
+            if(position.Y >= GameWorld.GetScreenSize().Y)
             {
-                Game1.AddGameobjectToRemove(this);
+                GameWorld.AddGameobjectToRemove(this);
             }
         }
     }

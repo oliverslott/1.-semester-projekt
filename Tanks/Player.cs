@@ -124,7 +124,7 @@ namespace Tanks
                 //Alternative solution could be to disable to bullet collision for a few milliseconds, but this is simpler
                 var bulletPosition = position + direction * 50;
 
-                Game1.InstantiateGameobject(new Bullet(bulletPosition, direction * 2));
+                GameWorld.InstantiateGameobject(new Bullet(bulletPosition, direction * 2));
                 turnManager.EndTurn();
 
                 cannonSound.Play(soundEffectVolume, 0.0f, 0.0f);
@@ -184,10 +184,10 @@ namespace Tanks
             {
                 health -= 70;
                 Debug.WriteLine($"Tank got hit and now has {health} health left");
-                Game1.AddGameobjectToRemove(other);
+                GameWorld.AddGameobjectToRemove(other);
                 if (health <= 0)
                 {
-                    Game1.AddGameobjectToRemove(this);
+                    GameWorld.AddGameobjectToRemove(this);
                 }
             }
         }
