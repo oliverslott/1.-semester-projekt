@@ -53,7 +53,7 @@ namespace Tanks
             Sprite = isPlayerOne ? playerOneTexture : playerTwoTexture;
 
             // Tilføj kanonens sprite
-            cannonTexture = contentManager.Load<Texture2D>("tank_model_4_5_w1"); 
+            cannonTexture = contentManager.Load<Texture2D>("Cannon"); 
             cannon = new Cannon(cannonTexture, position); // Initialiser kanonen
         }
 
@@ -65,6 +65,7 @@ namespace Tanks
             // Bevæg tanken
             if (isPlayerOne)
             {
+                // Player One bevægelse frem og tilbage
                 if (keyboardState.IsKeyDown(Keys.A)) 
                 {
                     position.X -= speed;
@@ -76,12 +77,21 @@ namespace Tanks
                     spriteEffects = SpriteEffects.None;
                 }
 
-                // Roter kanonen med W og S
-                if (keyboardState.IsKeyDown(Keys.W)) cannon.Rotate(-0.05f);
+                // Roter kanonen med W og S for Player One
+                if (keyboardState.IsKeyDown(Keys.W)) 
+                {
+                    // Kanonens rotationshastighed
+                    cannon.Rotate(-0.05f);
+
+                    // Tjek for output ved tryk på W
+                    Console.WriteLine("pressing W");
+                }
+                // Kanonens rotationshastighed
                 if (keyboardState.IsKeyDown(Keys.S)) cannon.Rotate(0.05f);
             }
             else
             {
+                // Player two bevægelse frem og tilbage
                 if (keyboardState.IsKeyDown(Keys.Left)) 
                 {
                     position.X -= speed;
@@ -93,7 +103,7 @@ namespace Tanks
                     spriteEffects = SpriteEffects.None;
                 }
 
-                // Roter kanonen med pil op og pil ned
+                // Roter kanonen med pil op og pil ned for Player Two samt rotationshastighed for kanon
                 if (keyboardState.IsKeyDown(Keys.Up)) cannon.Rotate(-0.05f);
                 if (keyboardState.IsKeyDown(Keys.Down)) cannon.Rotate(0.05f);
             }

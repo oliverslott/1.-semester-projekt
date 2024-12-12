@@ -22,33 +22,30 @@ namespace Tanks
             this.rotation = 0f;
             this.scale = 0.15f;
 
-            // Centrer origin, så rotation sker omkring kanonens midtpunkt
-            this.origin = new Vector2(sprite.Width + 50, sprite.Height - 100);
+            // Kanonens rotation sker om følgende punkt
+            this.origin = new Vector2(sprite.Width - 32, sprite.Height- 100);
         }
 
         public void Update(Vector2 tankCenter, float tankRotation, bool isFlipped)
         {
-            // Beregn en offset for at flytte kanonen op
-            Vector2 offset = new Vector2(-8, -30); // Flytter kanonen 20 pixels op (juster efter behov)
+            // Beregn en offset til at flytte kanonen. Dette er koordinater for, hvor den er placeret.
+            Vector2 offset = new Vector2(- 21, -30);
 
             // Roter offset omkring tankens midtpunkt baseret på tankens rotation
             Matrix rotationMatrix = Matrix.CreateRotationZ(tankRotation);
             offset = Vector2.Transform(offset, rotationMatrix);
 
-            // Hvis tanken er flipped, spejl offset vandret
+            // Hvis tank ændrer retning, flip offset for kanonen.
             if (isFlipped)
             {
                 offset.X = -offset.X;
-                
-                // Justér positionen for flip omkring venstre side
-                position = tankCenter + offset - new Vector2(sprite.Width * scale, 0); // Flyt mod venstre
             }
 
-            // Placér kanonen midt på tanken med offset
+            // Placér kanon på tanken vha. offset og tankCenter
             position = tankCenter + offset;
 
-            // Rotation af kanonen følger tankens rotation plus den specifikke rotation af kanonen
-            rotation = tankRotation;
+            // Rotation af kanonen skal på baggrund af tankens rotation og kanonens rotation
+            rotation = tankRotation + this.rotation;
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteEffects spriteEffects)
@@ -58,17 +55,24 @@ namespace Tanks
             position,
             null,
             Color.White,
-            rotation, // Roter kanonen som normalt
-            origin,   // Sørg for, at kanonen roterer omkring sit midtpunkt
+            rotation, 
+            origin,   
             scale,
-            spriteEffects, // Flip baseret på tankens retning
+            spriteEffects, 
             0
         );
         }
 
         public void Rotate(float angle)
         {
-            rotation += angle; // Justér kanonens rotation
+            // Ændrer kanonens rotation
+            rotation += angle; 
+
+            // Begrænser rotation for kanonen til at være parallel med tanken.
+            this.rotation = Math.Clamp(this.rotation, -MathHelper.ToRadians(0), MathHelper.ToRadians(180));
+
+            // Tjek for output
+            Console.WriteLine("rotating cannon");
         }
     }
 }
