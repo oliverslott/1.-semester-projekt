@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data.Common;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
+using System.Linq;
 
 namespace Tanks
 {
@@ -19,7 +15,7 @@ namespace Tanks
 
         public static GraphicsDevice GlobalGraphicsDevice { get; private set; }
 
-        //private SpriteFont textFont;
+        private SpriteFont textFont;
 
         private List<GameObject> gameObjects;
 
@@ -33,6 +29,8 @@ namespace Tanks
         private Texture2D mapSprite;
 
         private Player[] players = new Player[2]; //Currently game only supports 2 players
+
+        private Player winner;
 
         private TurnManager turnManager;
 
@@ -63,7 +61,7 @@ namespace Tanks
             gameObjects = new List<GameObject>();
             gameObjectsToRemove = new List<GameObject>();
             gameObjectsToAdd = new List<GameObject>();
-
+            winner = null;
             mapSprite = Content.Load<Texture2D>("tankmap");
 
             turnManager = new TurnManager(players);
@@ -85,6 +83,7 @@ namespace Tanks
 
         protected override void LoadContent()
         {
+            textFont = Content.Load<SpriteFont>("font");
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             collisionTexture = Content.Load<Texture2D>("pixel");
@@ -105,6 +104,17 @@ namespace Tanks
 
         protected override void Update(GameTime gameTime)
         {
+            CheckWinCondition();
+
+            if(winner != null)
+            {
+                var keyboardState = Keyboard.GetState();
+                if(keyboardState.IsKeyDown(Keys.R))
+                {
+                    Initialize();
+                }
+            }
+
             turnManager.Update(gameTime);
 
             foreach (GameObject gameObject in gameObjects)
@@ -151,7 +161,11 @@ namespace Tanks
 #endif
             }
 
-
+            if (winner != null)
+            {
+                _spriteBatch.DrawString(textFont, $"Player {Array.IndexOf(players, winner)+1} won!", new Vector2(400, 300), Color.White, 0f, Vector2.Zero, 5f, SpriteEffects.None, 0f);
+                _spriteBatch.DrawString(textFont, $"Press R to restart", new Vector2(400, 400), Color.White, 0f, Vector2.Zero, 5f, SpriteEffects.None, 0f);
+            }
 
             _spriteBatch.End();
 
@@ -203,6 +217,14 @@ namespace Tanks
             _spriteBatch.Draw(collisionTexture, leftLine, null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 1);
         }
 
-        
+        private void CheckWinCondition()
+        {
+            if (winner != null) return;
+
+            if(gameObjects.Count(o => o is Player) == 1)
+            {
+                winner = gameObjects.Find(o => o is Player) as Player;
+            }
+        }
     }
 }

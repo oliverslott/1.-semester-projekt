@@ -13,6 +13,13 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:font.spritefont
+
 #begin pixel.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -62,6 +69,7 @@
 /build:tankdriving.mp3
 
 #begin tankmap.png
+#begin tank_model_4_5_w1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -72,6 +80,7 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:tankmap.png
+/build:tank_model_4_5_w1.png
 
 #begin tankmusic.mp3
 /importer:Mp3Importer
