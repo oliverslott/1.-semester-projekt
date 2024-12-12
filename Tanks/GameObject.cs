@@ -27,9 +27,6 @@ public abstract class GameObject
     public Vector2 Size { get => size; set => size = value; } //TODO: It is currently the subclass' responsibility it to calculate Size, in the future it should be this class that does it, somehow..
     public bool CollisionEnabled { get => collisionEnabled; set => collisionEnabled = value; }
 
-    protected bool shouldBeRemoved;
-    public bool ShouldBeRemoved { get { return shouldBeRemoved; } }
-
     public abstract void LoadContent(ContentManager contentManager);
 
 
