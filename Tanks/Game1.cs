@@ -34,6 +34,21 @@ namespace Tanks
 
         private TurnManager turnManager;
 
+        // FIELDS for UI elementer
+        private int player1ShotsFired = 0;
+        private int player2ShotsFired = 0;
+        private Rectangle pauseButton;
+        
+        private TimeSpan elapsetTime = TimeSpan.Zero;
+
+        // Artillery menu
+        private ArtilleryMenu player1ArtilleryMenu;
+        private ArtilleryMenu player2ArtilleryMenu;
+
+        // Pause menu
+        private SpriteFont font;
+        private bool isPaused = false;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -87,6 +102,21 @@ namespace Tanks
                 gameobject.LoadContent(Content);
             }
 
+            //Load font
+            font = Content.Load<SpriteFont>("font");
+
+            // Load artillery menu
+            //player 1
+            var player1AmmoTypes = new List<string> { "Cannon", "Missile", "Laser" };
+            player1ArtilleryMenu = new ArtilleryMenu(player1AmmoTypes, new Vector2(10, 10), font);
+
+            //player 2
+            var player2AmmoTypes = new List<string> { "Cannon", "Missile", "Laser" };
+            player2ArtilleryMenu = new ArtilleryMenu(player2AmmoTypes, new Vector2(10, 10), font);
+
+            // Pause button rectangle
+            pauseButton = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 50, 10, 100, 30);
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -134,6 +164,22 @@ namespace Tanks
                 DrawCollisionBox(gameobject);
 #endif
             }
+
+            // draw artillery menu
+            player1ArtilleryMenu.Draw(_spriteBatch);
+            player2ArtilleryMenu.Draw(_spriteBatch);
+
+            // Draw Pause button
+            _spriteBatch.Draw(Texture2DHelper.GetRectangleTexture(GraphicsDevice, pauseButton), pauseButton, Color.Gray);
+            _spriteBatch.DrawString(font, "PAUSE", new Vector2(pauseButton.X + 10, pauseButton.Y + 5), Color.White);
+
+            // Draw elapsed time
+            string timeText = $"TIME: {elapsetTime.Minutes:D2}: {elapsetTime.Seconds:D2}";
+            _spriteBatch.DrawString(font, timeText, new Vector2(GraphicsDevice.Viewport.Width / 2 + 100, 10), Color.White);
+
+            // Draw Shots affyret af hver spiller
+            string shotsText = $"SHOTS FIRED: Player 1 = {player1ShotsFired}, Player 2 = {player2ShotsFired}";
+            _spriteBatch.DrawString(font, shotsText, new Vector2(GraphicsDevice.Viewport.Width - 300, 10), Color.White);
 
 
 
@@ -187,6 +233,22 @@ namespace Tanks
             _spriteBatch.Draw(collisionTexture, leftLine, null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 1);
         }
 
-        
+        // texture rectangle for pause button
+        public static class Texture2DHelper
+        {
+            public static Texture2D GetRectangleTexture(GraphicsDevice graphicsDevice, Rectangle rectangle)
+            {
+                Texture2D texture = new Texture2D(graphicsDevice, rectangle.Width, rectangle.Height);
+                Color[] colorData = new Color[rectangle.Width * rectangle.Height];
+                for (int i = 0; i < colorData.Length; ++i)
+                {
+                    colorData[i] = Color.White;
+                }
+                texture.SetData(colorData);
+                return texture;
+            }
+        }
+
+
     }
 }
