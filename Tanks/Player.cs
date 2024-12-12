@@ -107,6 +107,21 @@ namespace Tanks
 
                 cannonSound.Play(soundEffectVolume, 0.0f, 0.0f);
             }
+            if (keyboardState.IsKeyDown(Keys.A) || keyboardState.IsKeyDown(Keys.D))
+            {
+                if (drivingInstance.State != SoundState.Playing)
+                {
+                    drivingInstance.Volume = soundEffectVolume;
+                    drivingInstance.Play();
+                }
+            }
+            else
+            {
+                if (drivingInstance.State == SoundState.Playing)
+                {
+                    drivingInstance.Stop();
+                }
+            }
 
 
 
