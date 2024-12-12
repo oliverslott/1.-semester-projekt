@@ -29,6 +29,9 @@ namespace Tanks
         private Texture2D cannonTexture;
 
         public Player(Vector2 startPosition, bool isPlayerOne)
+        {
+
+        }
         private KeyboardState prevKeyboardState;
 
         public Player(Vector2 startPosition, bool isPlayerOne, TurnManager turnManager)
@@ -71,60 +74,46 @@ namespace Tanks
         public override void Update(GameTime gameTime)
         {
             healthBar.CurrentHealth = health;
-            healthBar.Position = position - new Vector2(0, 1) * 18; //Healthbar is 18 pixels above the tank
+            healthBar.Position = position - new Vector2(0, 1) * 18; // Healthbar er 18 pixels over tanken
 
+            // Tjek, om det er spillerens tur
             if (!turnManager.IsPlayerTurn(this))
                 return;
 
             var keyboardState = Keyboard.GetState();
             bool isFlipped = false;
 
-            // Bevæg tanken
+            // Player One input
             if (isPlayerOne)
             {
-                // Player One bevægelse frem og tilbage
-                if (keyboardState.IsKeyDown(Keys.A)) 
+                if (keyboardState.IsKeyDown(Keys.A))
                 {
                     position.X -= speed;
                     spriteEffects = SpriteEffects.FlipHorizontally;
                 }
-                if (keyboardState.IsKeyDown(Keys.D)) 
+                if (keyboardState.IsKeyDown(Keys.D))
                 {
                     position.X += speed;
                     spriteEffects = SpriteEffects.None;
                 }
 
-                // Roter kanonen med W og S for Player One
-                if (keyboardState.IsKeyDown(Keys.W)) 
-                {
-                    // Kanonens rotationshastighed
-                    cannon.Rotate(-0.05f);
-
-                    // Tjek for output ved tryk på W
-                    Console.WriteLine("pressing W");
-                }
-                // Kanonens rotationshastighed
+                if (keyboardState.IsKeyDown(Keys.W)) cannon.Rotate(-0.05f);
                 if (keyboardState.IsKeyDown(Keys.S)) cannon.Rotate(0.05f);
-            if (keyboardState.IsKeyDown(Keys.A) || keyboardState.IsKeyDown(Keys.Left)) 
-            {
-                position.X -= speed;
-                spriteEffects = SpriteEffects.FlipHorizontally;
             }
-            if (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.Right)) 
+            // Player Two input
+            else
             {
-                // Player two bevægelse frem og tilbage
-                if (keyboardState.IsKeyDown(Keys.Left)) 
+                if (keyboardState.IsKeyDown(Keys.Left))
                 {
                     position.X -= speed;
                     spriteEffects = SpriteEffects.FlipHorizontally;
                 }
-                if (keyboardState.IsKeyDown(Keys.Right)) 
+                if (keyboardState.IsKeyDown(Keys.Right))
                 {
                     position.X += speed;
                     spriteEffects = SpriteEffects.None;
                 }
 
-                // Roter kanonen med pil op og pil ned for Player Two samt rotationshastighed for kanon
                 if (keyboardState.IsKeyDown(Keys.Up)) cannon.Rotate(-0.05f);
                 if (keyboardState.IsKeyDown(Keys.Down)) cannon.Rotate(0.05f);
             }
@@ -134,18 +123,24 @@ namespace Tanks
 
             // Opdater kanonens position og rotation
             cannon.Update(tankCenter, rotation, isFlipped);
-                position.X += speed;
-                spriteEffects = SpriteEffects.None;
-            }
-            if(keyboardState.IsKeyDown(Keys.Space) && !prevKeyboardState.IsKeyDown(Keys.Space))
+
+            // Skyd og afslut tur, når Space er trykket
+            if (keyboardState.IsKeyDown(Keys.Space) && !prevKeyboardState.IsKeyDown(Keys.Space))
             {
                 var bulletDirection = new Vector2(1, -1);
+                if (isFlipped = spriteEffects != SpriteEffects.FlipHorizontally)
+                {
+                    bulletDirection = new Vector2(1, -1);
+                }
+                else 
+                {
+                    bulletDirection = new Vector2(-1, -1);
+                }
 
-                //Spawns the bullet 30 pixels ahead so the player doesn't get hit by its own bullet
-                //Alternative solution could be to disable to bullet collision for a few milliseconds, but this is simpler
+                // Spawn bullet lidt væk fra tanken
                 var bulletPosition = position + bulletDirection * 30;
-
                 Game1.InstantiateGameobject(new Bullet(bulletPosition, bulletDirection));
+
                 turnManager.EndTurn();
             }
 
