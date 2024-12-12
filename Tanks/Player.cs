@@ -75,7 +75,7 @@ namespace Tanks
             driving = contentManager.Load<SoundEffect>("tankdriving"); // loads walking sound
             drivingInstance = driving.CreateInstance(); // creates instance for playback during player movement
             // Tilføj kanonens sprite
-            cannonTexture = contentManager.Load<Texture2D>("tank_model_4_5_w1");
+            cannonTexture = contentManager.Load<Texture2D>("Cannon");
             cannon = new Cannon(cannonTexture, position); // Initialiser kanonen
         }
 
