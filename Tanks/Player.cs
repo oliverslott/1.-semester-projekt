@@ -122,6 +122,10 @@ namespace Tanks
                 health -= 70;
                 Debug.WriteLine($"Tank got hit and now has {health} health left");
                 Game1.AddGameobjectToRemove(other);
+                if(health <= 0)
+                {
+                    Game1.AddGameobjectToRemove(this);
+                }
             }
         }
 
