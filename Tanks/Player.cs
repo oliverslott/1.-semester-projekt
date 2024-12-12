@@ -63,7 +63,7 @@ namespace Tanks
             Sprite = isPlayerOne ? playerOneTexture : playerTwoTexture;
 
             // Tilføj kanonens sprite
-            cannonTexture = contentManager.Load<Texture2D>("tank_model_4_5_w1"); 
+            cannonTexture = contentManager.Load<Texture2D>("tank_model_4_5_w1");
             cannon = new Cannon(cannonTexture, position); // Initialiser kanonen
         }
 
@@ -72,77 +72,59 @@ namespace Tanks
             healthBar.CurrentHealth = health;
             healthBar.Position = position - new Vector2(0, 1) * 18; //Healthbar is 18 pixels above the tank
 
+            // Beregn tankens centerpunkt
+            Vector2 tankCenter = position + new Vector2(Sprite.Width / 2 * scale, Sprite.Height / 2 * scale);
+
+            bool isFlipped = false;
+            // Opdater kanonens position og rotation
+            cannon.Update(tankCenter, rotation, isFlipped);
+
             if (!turnManager.IsPlayerTurn(this))
                 return;
 
             var keyboardState = Keyboard.GetState();
-            bool isFlipped = false;
 
-            if (keyboardState.IsKeyDown(Keys.A) || keyboardState.IsKeyDown(Keys.Left)) 
+            // Bevæg tanken
+            if (keyboardState.IsKeyDown(Keys.A) || keyboardState.IsKeyDown(Keys.Left))
             {
                 position.X -= speed;
                 spriteEffects = SpriteEffects.FlipHorizontally;
-            // Bevæg tanken
-            if (isPlayerOne)
-            {
-                if (keyboardState.IsKeyDown(Keys.A)) 
-                {
-                    position.X -= speed;
-                    spriteEffects = SpriteEffects.FlipHorizontally;
-                }
-                if (keyboardState.IsKeyDown(Keys.D)) 
-                {
-                    position.X += speed;
-                    spriteEffects = SpriteEffects.None;
-                }
-
-                // Roter kanonen med W og S
-                if (keyboardState.IsKeyDown(Keys.W)) cannon.Rotate(-0.05f);
-                if (keyboardState.IsKeyDown(Keys.S)) cannon.Rotate(0.05f);
             }
-            if (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.Right)) 
+            if (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.Right))
             {
                 position.X += speed;
                 spriteEffects = SpriteEffects.None;
             }
-            if(keyboardState.IsKeyDown(Keys.Space) && !prevKeyboardState.IsKeyDown(Keys.Space))
+
+            // Roter kanonen med W og S
+            if (keyboardState.IsKeyDown(Keys.W)) cannon.Rotate(-0.05f);
+            if (keyboardState.IsKeyDown(Keys.S)) cannon.Rotate(0.05f);
+            if (keyboardState.IsKeyDown(Keys.Space) && !prevKeyboardState.IsKeyDown(Keys.Space))
             {
-                var bulletDirection = new Vector2(1, -1);
+                //var bulletDirection = new Vector2(1, -1);
+                Vector2 direction = new Vector2((float)Math.Cos(cannon.Rotation), (float)Math.Sin(cannon.Rotation));
+                direction.Normalize();
+
+                // direction now contains the unit vector representing the direction
 
                 //Spawns the bullet 30 pixels ahead so the player doesn't get hit by its own bullet
                 //Alternative solution could be to disable to bullet collision for a few milliseconds, but this is simpler
-                var bulletPosition = position + bulletDirection * 30;
+                var bulletPosition = position + direction * 50;
 
-                Game1.InstantiateGameobject(new Bullet(bulletPosition, bulletDirection));
+                Game1.InstantiateGameobject(new Bullet(bulletPosition, direction * 2));
                 turnManager.EndTurn();
             }
 
             prevKeyboardState = keyboardState;
-                if (keyboardState.IsKeyDown(Keys.Left)) 
-                {
-                    position.X -= speed;
-                    spriteEffects = SpriteEffects.FlipHorizontally;
-                }
-                if (keyboardState.IsKeyDown(Keys.Right)) 
-                {
-                    position.X += speed;
-                    spriteEffects = SpriteEffects.None;
-                }
 
-                // Roter kanonen med pil op og pil ned
-                if (keyboardState.IsKeyDown(Keys.Up)) cannon.Rotate(-0.05f);
-                if (keyboardState.IsKeyDown(Keys.Down)) cannon.Rotate(0.05f);
-            }
-
-            // Beregn tankens centerpunkt
-            Vector2 tankCenter = position + new Vector2(Sprite.Width / 2 * scale, Sprite.Height / 2 * scale);
-
-            // Opdater kanonens position og rotation
-            cannon.Update(tankCenter, rotation, isFlipped);
+            // Roter kanonen med pil op og pil ned
+            if (keyboardState.IsKeyDown(Keys.Up)) cannon.Rotate(-0.05f);
+            if (keyboardState.IsKeyDown(Keys.Down)) cannon.Rotate(0.05f);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            healthBar.Draw(spriteBatch);
             // Tegn tanken først
             spriteBatch.Draw(Sprite, position, null, Color.White, rotation,
                 new Vector2(Sprite.Width / 2, Sprite.Height / 2), scale, spriteEffects, 0);
@@ -166,12 +148,12 @@ namespace Tanks
 
         public override void OnCollision(GameObject other)
         {
-            if(other is Bullet)
+            if (other is Bullet)
             {
                 health -= 70;
                 Debug.WriteLine($"Tank got hit and now has {health} health left");
                 Game1.AddGameobjectToRemove(other);
-                if(health <= 0)
+                if (health <= 0)
                 {
                     Game1.AddGameobjectToRemove(this);
                 }

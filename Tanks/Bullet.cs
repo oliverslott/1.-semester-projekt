@@ -20,8 +20,8 @@ namespace Tanks
             Sprite = new Texture2D(Game1.GlobalGraphicsDevice, 1, 1);
             scale = 5;
             Sprite.SetData(new[] { Color.Black });
-            velocity = direction;
-            speed = 300;
+            velocity = direction * 250;
+            speed = 1;
         }
         public override void LoadContent(ContentManager contentManager)
         {
@@ -36,7 +36,7 @@ namespace Tanks
         public override void Update(GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            velocity.Y += 1f * deltaTime;
+            velocity.Y += 300f * deltaTime;
             Move(gameTime);
 
             if(position.Y >= Game1.GetScreenSize().Y)
