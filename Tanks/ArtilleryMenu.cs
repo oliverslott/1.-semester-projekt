@@ -28,7 +28,7 @@ namespace Tanks
         {
             for (int i = 0; i < ammoTypes.Count; i++)
             {
-                Color color = (i == SelectedAmmo) ? Color.Yellow : Color.White;
+                Color color = (i == SelectedAmmo) ? Color.Yellow : Color.Black;
                 spriteBatch.DrawString(font, ammoTypes[i], position + new Vector2(i * 100, 0), color);
             }
         }

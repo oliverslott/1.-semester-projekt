@@ -197,15 +197,15 @@ namespace Tanks
 
             // Draw Pause button
             _spriteBatch.Draw(Texture2DHelper.GetRectangleTexture(GraphicsDevice, pauseButton), pauseButton, Color.Gray);
-            _spriteBatch.DrawString(font, "PAUSE", new Vector2(pauseButton.X + 10, pauseButton.Y + 5), Color.White);
+            _spriteBatch.DrawString(font, "PAUSE", new Vector2(pauseButton.X + 10, pauseButton.Y + 5), Color.Black);
 
             // Draw elapsed time
             string timeText = $"TIME: {elapsetTime.Minutes:D2}: {elapsetTime.Seconds:D2}";
-            _spriteBatch.DrawString(font, timeText, new Vector2(GraphicsDevice.Viewport.Width / 2 + 100, 10), Color.White);
+            _spriteBatch.DrawString(font, timeText, new Vector2(GraphicsDevice.Viewport.Width / 2 + 100, 10), Color.Black);
 
             // Draw Shots affyret af hver spiller
             string shotsText = $"SHOTS FIRED: Player 1 = {player1ShotsFired}, Player 2 = {player2ShotsFired}";
-            _spriteBatch.DrawString(font, shotsText, new Vector2(GraphicsDevice.Viewport.Width - 300, 10), Color.White);
+            _spriteBatch.DrawString(font, shotsText, new Vector2(GraphicsDevice.Viewport.Width - 300, 10), Color.Black);
 
 
             if (winner != null)
