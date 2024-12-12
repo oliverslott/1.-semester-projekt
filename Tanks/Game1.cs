@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data.Common;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Linq;
 using Microsoft.Xna.Framework.Media;
 
 namespace Tanks
@@ -19,7 +16,7 @@ namespace Tanks
 
         public static GraphicsDevice GlobalGraphicsDevice { get; private set; }
 
-        //private SpriteFont textFont;
+        private SpriteFont textFont;
 
         private List<GameObject> gameObjects;
 
@@ -30,7 +27,11 @@ namespace Tanks
 
         private Texture2D collisionTexture;
 
+        private Texture2D mapSprite;
+
         private Player[] players = new Player[2]; //Currently game only supports 2 players
+
+        private Player winner;
 
         private TurnManager turnManager;
 
@@ -48,6 +49,8 @@ namespace Tanks
         // Pause menu
         private SpriteFont font;
         private bool isPaused = false;
+        private Song song;
+        private float songVolume = 0.02f;
 
         public Game1()
         {
@@ -73,12 +76,14 @@ namespace Tanks
             gameObjects = new List<GameObject>();
             gameObjectsToRemove = new List<GameObject>();
             gameObjectsToAdd = new List<GameObject>();
+            winner = null;
+            mapSprite = Content.Load<Texture2D>("tankmap");
 
             turnManager = new TurnManager(players);
 
             // Opret to spillere med startpositioner
-            var player1 = new Player(new Vector2(200, 360), true, turnManager);  // Spiller 1 til venstre
-            var player2 = new Player(new Vector2(1080, 360), false, turnManager); // Spiller 2 til højre
+            var player1 = new Player(new Vector2(200, 405), true, turnManager);  // Spiller 1 til venstre
+            var player2 = new Player(new Vector2(1080, 405), false, turnManager); // Spiller 2 til højre
 
             //Add player to a list so that we can later reference them for changing turns and deciding who won
             players[0] = player1;
@@ -93,9 +98,12 @@ namespace Tanks
 
         protected override void LoadContent()
         {
+            textFont = Content.Load<SpriteFont>("font");
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             collisionTexture = Content.Load<Texture2D>("pixel");
+
+            mapSprite = Content.Load<Texture2D>("tankmap");
 
             foreach (GameObject gameobject in gameObjects)
             {
@@ -117,10 +125,26 @@ namespace Tanks
             // Pause button rectangle
             pauseButton = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 50, 10, 100, 30);
 
+            song = Content.Load<Song>("tankmusic"); // music for the game
+
+            MediaPlayer.IsRepeating = true; // music keeps playing as long as the game is running
+            MediaPlayer.Volume = songVolume;
+            MediaPlayer.Play(song);
         }
 
         protected override void Update(GameTime gameTime)
         {
+            CheckWinCondition();
+
+            if(winner != null)
+            {
+                var keyboardState = Keyboard.GetState();
+                if(keyboardState.IsKeyDown(Keys.R))
+                {
+                    Initialize();
+                }
+            }
+
             turnManager.Update(gameTime);
 
             foreach (GameObject gameObject in gameObjects)
@@ -156,6 +180,8 @@ namespace Tanks
 
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
+            _spriteBatch.Draw(mapSprite, Vector2.Zero, Color.White);
+
             foreach (GameObject gameobject in gameObjects)
             {
                 gameobject.Draw(_spriteBatch);
@@ -182,6 +208,11 @@ namespace Tanks
             _spriteBatch.DrawString(font, shotsText, new Vector2(GraphicsDevice.Viewport.Width - 300, 10), Color.White);
 
 
+            if (winner != null)
+            {
+                _spriteBatch.DrawString(textFont, $"Player {Array.IndexOf(players, winner)+1} won!", new Vector2(400, 300), Color.White, 0f, Vector2.Zero, 5f, SpriteEffects.None, 0f);
+                _spriteBatch.DrawString(textFont, $"Press R to restart", new Vector2(400, 400), Color.White, 0f, Vector2.Zero, 5f, SpriteEffects.None, 0f);
+            }
 
             _spriteBatch.End();
 
@@ -250,5 +281,14 @@ namespace Tanks
         }
 
 
+        private void CheckWinCondition()
+        {
+            if (winner != null) return;
+
+            if(gameObjects.Count(o => o is Player) == 1)
+            {
+                winner = gameObjects.Find(o => o is Player) as Player;
+            }
+        }
     }
 }
