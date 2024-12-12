@@ -36,6 +36,9 @@ namespace Tanks
 
         private TurnManager turnManager;
 
+        private Song song;
+        private float songVolume = 0.02f;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -66,8 +69,8 @@ namespace Tanks
             turnManager = new TurnManager(players);
 
             // Opret to spillere med startpositioner
-            var player1 = new Player(new Vector2(200, 360), true, turnManager);  // Spiller 1 til venstre
-            var player2 = new Player(new Vector2(1080, 360), false, turnManager); // Spiller 2 til højre
+            var player1 = new Player(new Vector2(200, 405), true, turnManager);  // Spiller 1 til venstre
+            var player2 = new Player(new Vector2(1080, 405), false, turnManager); // Spiller 2 til højre
 
             //Add player to a list so that we can later reference them for changing turns and deciding who won
             players[0] = player1;
@@ -93,6 +96,11 @@ namespace Tanks
                 gameobject.LoadContent(Content);
             }
 
+            song = Content.Load<Song>("tankmusic"); // music for the game
+
+            MediaPlayer.IsRepeating = true; // music keeps playing as long as the game is running
+            MediaPlayer.Volume = songVolume;
+            MediaPlayer.Play(song);
         }
 
         protected override void Update(GameTime gameTime)
