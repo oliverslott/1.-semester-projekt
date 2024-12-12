@@ -72,7 +72,6 @@ namespace Tanks
         public void Rotate(float angle)
         {
             rotation += angle; // Justér kanonens rotation
-            Debug.WriteLine(rotation);
         }
     }
 }
