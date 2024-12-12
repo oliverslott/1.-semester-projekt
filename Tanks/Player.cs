@@ -28,7 +28,7 @@ namespace Tanks
 
         private SoundEffect cannonSound;
         private SoundEffectInstance cannonSoundInstance;
-        private float soundEffectVolume = 0.05f;
+        private float soundEffectVolume = 0.03f;
 
         private SoundEffect driving;
         private SoundEffectInstance drivingInstance;
