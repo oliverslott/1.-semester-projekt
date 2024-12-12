@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -24,6 +25,13 @@ namespace Tanks
         private HealthBar healthBar;
 
         private KeyboardState prevKeyboardState;
+
+        private SoundEffect cannonSound;
+        private SoundEffectInstance cannonSoundInstance;
+        private float soundEffectVolume = 0.05f;
+
+        private SoundEffect driving;
+        private SoundEffectInstance drivingInstance;
 
         public Player(Vector2 startPosition, bool isPlayerOne, TurnManager turnManager)
         {
@@ -56,6 +64,12 @@ namespace Tanks
 
             //Spites for spillere
             Sprite = isPlayerOne ? playerOneTexture : playerTwoTexture;
+
+            cannonSound = contentManager.Load<SoundEffect>("tankcannon"); // loads bullet sound
+            cannonSoundInstance = cannonSound.CreateInstance(); // creates instance for playback
+
+            driving = contentManager.Load<SoundEffect>("tankdriving"); // loads walking sound
+            drivingInstance = driving.CreateInstance(); // creates instance for playback during player movement
         }
 
         public override void Update(GameTime gameTime)
@@ -72,11 +86,13 @@ namespace Tanks
             {
                 position.X -= speed;
                 spriteEffects = SpriteEffects.FlipHorizontally;
+                
             }
             if (keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.Right)) 
             {
                 position.X += speed;
                 spriteEffects = SpriteEffects.None;
+                
             }
             if(keyboardState.IsKeyDown(Keys.Space) && !prevKeyboardState.IsKeyDown(Keys.Space))
             {
@@ -88,7 +104,11 @@ namespace Tanks
 
                 Game1.InstantiateGameobject(new Bullet(bulletPosition, bulletDirection));
                 turnManager.EndTurn();
+
+                cannonSound.Play(soundEffectVolume, 0.0f, 0.0f);
             }
+
+
 
             prevKeyboardState = keyboardState;
         }
