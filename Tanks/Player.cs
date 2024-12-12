@@ -21,7 +21,6 @@ namespace Tanks
         private Texture2D playerOneTexture;
         private Texture2D playerTwoTexture;
         private bool isPlayerOne;
-        private new int speed;
         private HealthBar healthBar;
 
         private KeyboardState prevKeyboardState;
